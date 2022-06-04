@@ -34,7 +34,7 @@ namespace TodoCustomList.Services
         {
             var todo = await context.Todos.FindAsync(id);
 
-            if (todo is null) throw new Exception();
+            if (todo is null) throw new Exception("Nenhum registro encontrado");
             
             return todo;
         }

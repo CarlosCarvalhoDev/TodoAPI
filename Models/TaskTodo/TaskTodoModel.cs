@@ -12,7 +12,7 @@ namespace TodoCustomList.Models
         [Required]
         [MaxLength(255)]
         public string Name { get; set; }
-        public bool IsCompleted { get; set; }
+        public bool IsCompleted { get; set; } = false;
         public Guid TodoId { get; set; }
         
         [ForeignKey("TodoId")]

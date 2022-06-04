@@ -8,9 +8,6 @@ namespace TodoCustomList.Models.TaskTodo.TaskTodoDTO
         public string Name { get; set; }
 
         [Required]
-        public bool IsCompleted { get; set; } = false;
-
-        [Required]
         public Guid TodoId { get; set; }
 
     }

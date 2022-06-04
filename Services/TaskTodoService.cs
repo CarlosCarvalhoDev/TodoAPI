@@ -14,7 +14,6 @@ namespace TodoCustomList.Services
             var newtask = new TaskTodoModel()
             {
                 Name = task.Name,
-                IsCompleted = task.IsCompleted,
                 TodoId = task.TodoId
             };
             
@@ -61,6 +60,11 @@ namespace TodoCustomList.Services
             await context.SaveChangesAsync();
 
             return oldTask;
+        }
+
+        public async Task<List<TaskTodoModel>> GetAllTaskByTodoId(Guid id)
+        {
+            return await context.Tasks.AsQueryable().Where(a => a.TodoId == id).ToListAsync();
         }
     }
 }

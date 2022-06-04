@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoCustomList.Models;
+using TodoCustomList.Models.TaskTodo.TaskTodoVM;
 using TodoCustomList.Models.Todo.Dto;
+using TodoCustomList.Models.Todo.TodoVM;
 using TodoCustomList.Services;
 
 namespace TodoCustomList.Controllers
@@ -10,14 +12,22 @@ namespace TodoCustomList.Controllers
     public class TodoController : ControllerBase
     {
         private TodoService todoService = new TodoService();
-
+        private TaskTodoService taskService = new TaskTodoService();
+     
         //create
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateTodoDTO createTodoDTO)
         {
             try
             {
-                return StatusCode(StatusCodes.Status201Created, await todoService.Create(createTodoDTO));
+                var newTodo = await todoService.Create(createTodoDTO);
+                
+                return StatusCode(StatusCodes.Status201Created, new TodoSumaryResponseViewModel
+                {
+                    Id = newTodo.Id,
+                    Title = newTodo.Title,
+                    UserId = newTodo.UserId,
+                });
             }
             catch (Exception ex)
             {
@@ -31,7 +41,14 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-                return StatusCode(StatusCodes.Status200OK, await todoService.GetAll());
+                var listTodo = (await todoService.GetAll()).Select(a => new TodoSumaryResponseViewModel
+                {
+                    Id = a.Id,
+                    Title = a.Title,
+                    UserId = a.UserId,
+                });
+
+                return StatusCode(StatusCodes.Status200OK, listTodo);
             }
             catch
             {
@@ -45,11 +62,26 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-                return StatusCode(StatusCodes.Status200OK, await todoService.GetById(Guid.Parse(id)));
+                var todo = await todoService.GetById(Guid.Parse(id));
+                var listTaskTodo = (await taskService.GetAll()).Where(a => a.TodoId == todo.Id).Select(a => new TaskTodoResponseViewModel
+                {
+                    Id = a.Id,
+                    Name = a.Name,
+                    IsCompleted = a.IsCompleted
+
+                }).ToList();
+
+                return StatusCode(StatusCodes.Status200OK, new GetByIdTodoResponseViewModel
+                {
+                    Id = todo.Id,
+                    Description = todo.Description,
+                    Title = todo.Title,
+                    Tasks = listTaskTodo
+                }); 
             }
             catch(Exception ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
         }
 
@@ -63,7 +95,7 @@ namespace TodoCustomList.Controllers
             }
             catch(Exception ex)
             {
-                return StatusCode(StatusCodes.Status304NotModified, ex);
+                return StatusCode(StatusCodes.Status304NotModified, ex.Message);
             }
         }
 
@@ -78,7 +110,7 @@ namespace TodoCustomList.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
 

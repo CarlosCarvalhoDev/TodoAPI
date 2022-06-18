@@ -13,6 +13,7 @@ namespace TodoCustomList.Controllers
     {
         private TodoService todoService = new TodoService();
         private TaskTodoService taskService = new TaskTodoService();
+        private UserService userService = new UserService();
      
         //create
         [HttpPost]
@@ -114,5 +115,47 @@ namespace TodoCustomList.Controllers
             }
         }
 
+        [HttpGet("todobyuser")]
+        public async Task<IActionResult> GetAllGroupByUser()
+        {
+            try
+            {
+                var listTodo = (await todoService.GetAll()).Select(a => new TodoSumaryResponseViewModel
+                {
+                    Id = a.Id,
+                    Title = a.Title,
+                    UserId = a.UserId,
+                }).GroupBy(a => a.UserId);
+
+                var retornoListTodoUser = new List<ListTodoUserResponseViewModel>();
+                
+                foreach (var userId in listTodo)
+                {
+                    var todoResponseViewlModel = new List<TodoResponseViewModel>();
+                    var todoRetorno = new ListTodoUserResponseViewModel();
+
+                    var userName = (await userService.GetById(userId.Key)).Name;
+                    
+                    foreach(var todoByUser in userId)
+                    {
+                        todoResponseViewlModel.Add(new TodoResponseViewModel() { Id = todoByUser.Id, Title = todoByUser.Title });
+                    }
+
+                    todoRetorno.UserId = userId.Key;
+                    todoRetorno.UserName = userName;
+                    todoRetorno.TodoList = todoResponseViewlModel;
+
+                    retornoListTodoUser.Add(todoRetorno);
+
+                }
+
+
+                return StatusCode(StatusCodes.Status200OK, retornoListTodoUser);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }

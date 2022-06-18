@@ -15,7 +15,7 @@ namespace TodoCustomList.Data
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
-            => optionsBuilder.UseSqlServer("Data Source=DESKTOP-UIB0ODE\\SQLEXPRESS;Database=TODO_API_SQL;Integrated Security=sspi;");
+            => optionsBuilder.UseSqlServer("Data Source=DESKTOP-PFC7V2M\\SQLEXPRESS;Database=TODO_API_SQL;Integrated Security=sspi;");
 
         public DbSet<TodoModel> Todos { get; set; }
         public DbSet<UserModel> Users { get; set; }

@@ -25,7 +25,7 @@ namespace TodoCustomList.Services
             return todo;
         }
 
-        public async Task<List<TodoModel>> GetAll()
+        public async Task<IEnumerable<TodoModel>> GetAll()
         {
            return await context.Todos.AsQueryable().ToListAsync();
         }

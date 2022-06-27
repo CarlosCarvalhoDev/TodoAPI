@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoCustomList.Data;
 using TodoCustomList.Models;
+using TodoCustomList.Models.Todo.TodoVM;
 using TodoCustomList.Models.User.Dto;
 
 namespace TodoCustomList.Services
@@ -61,5 +62,28 @@ namespace TodoCustomList.Services
 
             return oldUser;
         }
+
+        public async Task<List<TodoSumaryResponseViewModel>> GetAllUserTodo()
+        {
+            var query = await context.Users.AsQueryable()
+                       .GroupJoin(context.Todos,
+                            user => user.Id,
+                            todo => todo.UserId,
+                            (user, todo) => new { User = user, Todo = todo.DefaultIfEmpty() })
+                       .SelectMany(result => result.User.Id,
+                                    (result, todo) => new TodoSumaryResponseViewModel
+                                    {
+                                        UserId = result.User.Id,
+                                        Id = result.Todo.user,
+                                        Title = result.Title,
+
+                                    }).ToListAsync();
+            
+
+        }
+
+
+
+
     }
 }

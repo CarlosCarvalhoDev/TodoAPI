@@ -120,13 +120,8 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-                var listTodo = (await todoService.GetAll()).Select(a => new TodoSumaryResponseViewModel
-                {
-                    Id = a.Id,
-                    Title = a.Title,
-                    UserId = a.UserId,
-                }).GroupBy(a => a.UserId);
-
+               
+                var listTodo = (await userService.GetAllUserTodo()).GroupBy(a => a.UserId);
                 var retornoListTodoUser = new List<ListTodoUserResponseViewModel>();
                 
                 foreach (var userId in listTodo)

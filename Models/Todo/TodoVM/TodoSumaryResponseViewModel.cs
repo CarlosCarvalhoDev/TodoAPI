@@ -2,8 +2,8 @@
 {
     public class TodoSumaryResponseViewModel
     {
-        public Guid Id { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public Guid UserId { get; set; }
+        public string TodoId { get; set; } = String.Empty;
+        public string Title { get; set; } = String.Empty;
+        public string UserId { get; set; } = String.Empty;
     }
 }

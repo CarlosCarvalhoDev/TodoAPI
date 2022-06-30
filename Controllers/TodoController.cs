@@ -25,9 +25,9 @@ namespace TodoCustomList.Controllers
                 
                 return StatusCode(StatusCodes.Status201Created, new TodoSumaryResponseViewModel
                 {
-                    Id = newTodo.Id,
+                    TodoId = newTodo.Id.ToString(),
                     Title = newTodo.Title,
-                    UserId = newTodo.UserId,
+                    UserId = newTodo.UserId.ToString(),
                 });
             }
             catch (Exception ex)
@@ -44,9 +44,9 @@ namespace TodoCustomList.Controllers
             {
                 var listTodo = (await todoService.GetAll()).Select(a => new TodoSumaryResponseViewModel
                 {
-                    Id = a.Id,
+                    TodoId = a.Id.ToString(),
                     Title = a.Title,
-                    UserId = a.UserId,
+                    UserId = a.UserId.ToString(),
                 });
 
                 return StatusCode(StatusCodes.Status200OK, listTodo);
@@ -120,23 +120,25 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-               
-                var listTodo = (await userService.GetAllUserTodo()).GroupBy(a => a.UserId);
+                var listTodo =  (todoService.GetAllUserTodo()).GroupBy(a => a.UserId);
                 var retornoListTodoUser = new List<ListTodoUserResponseViewModel>();
-                
+
                 foreach (var userId in listTodo)
                 {
                     var todoResponseViewlModel = new List<TodoResponseViewModel>();
                     var todoRetorno = new ListTodoUserResponseViewModel();
 
-                    var userName = (await userService.GetById(userId.Key)).Name;
-                    
-                    foreach(var todoByUser in userId)
+                    var userName = (await userService.GetById(Guid.Parse(userId.Key))).Name;
+
+                    foreach (var todoByUser in userId)
                     {
-                        todoResponseViewlModel.Add(new TodoResponseViewModel() { Id = todoByUser.Id, Title = todoByUser.Title });
+                        if(todoByUser.TodoId is not null)
+                        {
+                            todoResponseViewlModel.Add(new TodoResponseViewModel(){ Id = todoByUser.TodoId, Title = todoByUser.Title });
+                        }
                     }
 
-                    todoRetorno.UserId = userId.Key;
+                    todoRetorno.UserId =userId.Key;
                     todoRetorno.UserName = userName;
                     todoRetorno.TodoList = todoResponseViewlModel;
 

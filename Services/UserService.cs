@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoCustomList.Data;
 using TodoCustomList.Models;
-using TodoCustomList.Models.Todo.TodoVM;
 using TodoCustomList.Models.User.Dto;
 
 namespace TodoCustomList.Services
@@ -20,7 +19,7 @@ namespace TodoCustomList.Services
 
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
-            
+
             return user;
         }
 
@@ -33,8 +32,8 @@ namespace TodoCustomList.Services
         {
             var user = await context.Users.FindAsync(id);
 
-            if (user is null) throw new Exception(); 
-            
+            if (user is null) throw new Exception();
+
             return user;
         }
 
@@ -52,7 +51,7 @@ namespace TodoCustomList.Services
         {
             var oldUser = await context.Users.FindAsync(user.Id);
             if (oldUser is null) throw new Exception();
-           
+
             oldUser.Email = user.Email;
             oldUser.Password = user.Password;
             oldUser.Name = user.Name;
@@ -62,28 +61,6 @@ namespace TodoCustomList.Services
 
             return oldUser;
         }
-
-        public async Task<List<TodoSumaryResponseViewModel>> GetAllUserTodo()
-        {
-            var query = await context.Users.AsQueryable()
-                       .GroupJoin(context.Todos,
-                            user => user.Id,
-                            todo => todo.UserId,
-                            (user, todo) => new { User = user, Todo = todo.DefaultIfEmpty() })
-                       .SelectMany(result => result.User.Id,
-                                    (result, todo) => new TodoSumaryResponseViewModel
-                                    {
-                                        UserId = result.User.Id,
-                                        Id = result.Todo.user,
-                                        Title = result.Title,
-
-                                    }).ToListAsync();
-            
-
-        }
-
-
-
 
     }
 }

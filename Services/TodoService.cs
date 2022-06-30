@@ -2,6 +2,7 @@
 using TodoCustomList.Data;
 using TodoCustomList.Models;
 using TodoCustomList.Models.Todo.Dto;
+using TodoCustomList.Models.Todo.TodoVM;
 
 namespace TodoCustomList.Services
 {
@@ -66,6 +67,21 @@ namespace TodoCustomList.Services
             return oldTodo;
         }
 
-        
+        public List<TodoSumaryResponseViewModel> GetAllUserTodo()
+        {
+            var query = from user in context.Users
+                        join todo in context.Todos on user.Id equals todo.UserId into userTodo
+                        from result in userTodo.DefaultIfEmpty()
+                        select new TodoSumaryResponseViewModel
+                        {
+                            TodoId = result.Id.ToString(),
+                            Title = result.Title,
+                            UserId = user.Id.ToString(),
+                        };
+
+            return query.ToList();
+        }
+
+
     }
 }

@@ -9,6 +9,7 @@ namespace TodoCustomList.Services
     public class TodoService
     {
         private readonly AppDbContext context = new AppDbContext();
+
         public async Task<TodoModel> Create(CreateTodoDTO createTodoDTO)
         {
             var todo = new TodoModel()
@@ -50,22 +51,40 @@ namespace TodoCustomList.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<TodoModel> Update(UpdateTodoDTO todo)
+        public async Task<TodoModel> Update(string todoId,  UpdateTodoDTO updatedTodo)
         {
-            var oldTodo = await context.Todos.FindAsync(todo.Id);
+            var Todo = await context.Todos.FindAsync(Guid.Parse(todoId));
             
-            if (oldTodo is null) throw new Exception();
+            if (Todo is null) throw new Exception();
 
-            oldTodo.Title = todo.Title;
-            oldTodo.Description = todo.Description;
-            oldTodo.UpdatedDate = DateTime.Now;
-            oldTodo.UserId = todo.UserId;
+            Todo.Title = updatedTodo.Title;
+            Todo.Description = updatedTodo.Description;
+            Todo.UpdatedDate = DateTime.Now;
+            Todo.UserId = Todo.UserId;
+
+            context.Todos.Update(Todo);
+            await context.SaveChangesAsync();
+
+            return Todo;
+        }
+
+        public async Task<TodoModel> ChangeTodoUser(string todoId, string userId)
+        {
+            var oldTodo = await context.Todos.FindAsync(Guid.Parse(todoId));
+            if(oldTodo is null) throw new Exception("Nenhum Todo encontrado para este parametro.");
+
+            var user = await context.Users.FindAsync(Guid.Parse(userId));
+            if (user is null) throw new Exception("Nao existe usuario registrado para o ID informado");
+
+            oldTodo.UserId = user.Id;
+
 
             context.Todos.Update(oldTodo);
             await context.SaveChangesAsync();
 
             return oldTodo;
         }
+
 
         public List<TodoSumaryResponseViewModel> GetAllUserTodo()
         {

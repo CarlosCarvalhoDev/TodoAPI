@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using TodoCustomList.Models.TaskTodo.Dto;
 using TodoCustomList.Models.TaskTodo.TaskTodoDTO;
 using TodoCustomList.Models.TaskTodo.TaskTodoVM;
 using TodoCustomList.Services;
@@ -10,7 +11,7 @@ namespace TodoCustomList.Controllers
     public class TaskTodoController : ControllerBase
     {
         private TaskTodoService taskTodoService = new TaskTodoService();
-        private UserService userService = new UserService();
+        //private UserService userService = new UserService();
         //create
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateTaskTodoDTO createTaskTodoDTO)
@@ -87,6 +88,20 @@ namespace TodoCustomList.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex);
+            }
+        }
+
+        [HttpPost("updatestatus")]
+        public async Task<IActionResult> UpdateStatus([FromBody] UpdateStatusTaskDTO body)
+        {
+            try
+            {
+                await taskTodoService.UpdateStatus(body);
+                return StatusCode(StatusCodes.Status200OK, true);
+            }
+            catch (Exception ex)
+            {
+               return StatusCode(StatusCodes.Status500InternalServerError, ex);
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TodoCustomList.Models;
 using TodoCustomList.Models.User.Dto;
+using TodoCustomList.Models.User.UserVM;
 using TodoCustomList.Services;
 
 namespace TodoCustomList.Controllers
@@ -29,7 +30,14 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-                return StatusCode(StatusCodes.Status200OK, await userService.GetAll());
+                var users = (await userService.GetAll()).Select(a => new UserResponseViewModel
+                {
+                    Id = a.Id.ToString(),
+                    Email = a.Email,
+                    Name = a.Name
+                }).ToList();
+
+                return StatusCode(StatusCodes.Status200OK, new ListUserResponseViewModel { userResponseViewModels = users }); 
             }
             catch
             {

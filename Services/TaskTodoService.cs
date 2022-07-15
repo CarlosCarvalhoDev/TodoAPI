@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TodoCustomList.Data;
 using TodoCustomList.Models;
+using TodoCustomList.Models.TaskTodo.Dto;
 using TodoCustomList.Models.TaskTodo.TaskTodoDTO;
 using TodoCustomList.Models.TaskTodo.TaskTodoVM;
 
@@ -13,7 +14,7 @@ namespace TodoCustomList.Services
         {
             var newtask = new TaskTodoModel()
             {
-                Name = task.Name,
+                Name = task.TaskTitle,
                 TodoId = task.TodoId
             };
             
@@ -47,24 +48,36 @@ namespace TodoCustomList.Services
             await context.SaveChangesAsync();
         }
 
-        public async Task<TaskTodoModel> Update(UpdateTaskTodoDTO task)
+        public async Task<TaskTodoModel> Update(UpdateTaskTodoDTO taskDto)
         {
-            var oldTask = await context.Tasks.FindAsync(task.Id);
-            if (oldTask is null) throw new Exception();
+            var task = await context.Tasks.FindAsync(taskDto.Id);
+            if (task is null) throw new Exception();
 
-            oldTask.IsCompleted = task.IsCompleted;
-            oldTask.TodoId = task.TodoId;
-            oldTask.Name = task.Name;
+            task.IsCompleted = task.IsCompleted;
+            task.TodoId = task.TodoId;
+            task.Name = task.Name;
 
-            context.Tasks.Update(oldTask);
+            context.Tasks.Update(task);
             await context.SaveChangesAsync();
 
-            return oldTask;
+            return task;
         }
 
         public async Task<List<TaskTodoModel>> GetAllTaskByTodoId(Guid id)
         {
             return await context.Tasks.AsQueryable().Where(a => a.TodoId == id).ToListAsync();
+        }
+
+        public async Task UpdateStatus(UpdateStatusTaskDTO taskDTO)
+        {
+            var task = await context.Tasks.FindAsync(Guid.Parse(taskDTO.TaskId));
+            if(task is null) throw new Exception();
+
+            task.IsCompleted = taskDTO.IsCompleted;
+
+            context.Tasks.Update(task);
+            await context.SaveChangesAsync();
+
         }
     }
 }

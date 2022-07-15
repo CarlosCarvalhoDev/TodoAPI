@@ -87,14 +87,29 @@ namespace TodoCustomList.Controllers
         }
 
         //update
-        [HttpPatch()]
-        public async Task<IActionResult> Patch([FromBody] UpdateTodoDTO todo)
+        [HttpPatch("{todoId}")]
+        public async Task<IActionResult> Patch([FromRoute]string todoId, [FromBody]UpdateTodoDTO body)
         {
             try
             {
-                return StatusCode(StatusCodes.Status200OK, await todoService.Update(todo));
+                await todoService.Update(todoId, body);
+                return StatusCode(StatusCodes.Status200OK, true);
             }
             catch(Exception ex)
+            {
+                return StatusCode(StatusCodes.Status304NotModified, ex.Message);
+            }
+        }
+
+        [HttpPut("changetodouser/{todoId}")]
+        public async Task<IActionResult> ChangeTodoUser([FromRoute]string todoId, [FromBody] TodoChangeUserDto body)
+        {
+            try
+            {
+                await todoService.ChangeTodoUser(todoId, body.UserId);
+                return StatusCode(StatusCodes.Status200OK, true);
+            }
+            catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status304NotModified, ex.Message);
             }
@@ -145,7 +160,6 @@ namespace TodoCustomList.Controllers
                     retornoListTodoUser.Add(todoRetorno);
 
                 }
-
 
                 return StatusCode(StatusCodes.Status200OK, retornoListTodoUser);
             }

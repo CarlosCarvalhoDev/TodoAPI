@@ -17,7 +17,7 @@ namespace TodoCustomList.Controllers
      
         //create
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] CreateTodoDTO createTodoDTO)
+        public async Task<IActionResult> Post([FromBody] TodoDTO createTodoDTO)
         {
             try
             {
@@ -72,7 +72,7 @@ namespace TodoCustomList.Controllers
 
                 }).ToList();
 
-                return StatusCode(StatusCodes.Status200OK, new GetByIdTodoResponseViewModel
+                return StatusCode(StatusCodes.Status200OK, new GetTodoResponseViewModel
                 {
                     Id = todo.Id,
                     Description = todo.Description,
@@ -136,12 +136,12 @@ namespace TodoCustomList.Controllers
             try
             {
                 var listTodo =  (todoService.GetAllUserTodo()).GroupBy(a => a.UserId);
-                var retornoListTodoUser = new List<ListTodoUserResponseViewModel>();
+                var retornoListTodoUser = new List<TodosUsersResponseViewModel>();
 
                 foreach (var userId in listTodo)
                 {
                     var todoResponseViewlModel = new List<TodoResponseViewModel>();
-                    var todoRetorno = new ListTodoUserResponseViewModel();
+                    var todoRetorno = new TodosUsersResponseViewModel();
 
                     var userName = (await userService.GetById(Guid.Parse(userId.Key))).Name;
 

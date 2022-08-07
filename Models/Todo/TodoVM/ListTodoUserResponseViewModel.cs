@@ -1,6 +1,6 @@
 ﻿namespace TodoCustomList.Models.Todo.TodoVM
 {
-    public class ListTodoUserResponseViewModel
+    public class TodosUsersResponseViewModel
     {
         public string UserId { get; set; }
         public string UserName { get; set; }

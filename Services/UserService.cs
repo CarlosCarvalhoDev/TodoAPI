@@ -8,6 +8,8 @@ namespace TodoCustomList.Services
     public class UserService
     {
         private readonly AppDbContext context = new AppDbContext();
+
+        #region METHOD CREATE USER
         public async Task<UserModel> CreateUser(CreateUserDTO userDTO)
         {
             var user = new UserModel()
@@ -22,12 +24,16 @@ namespace TodoCustomList.Services
 
             return user;
         }
+        #endregion
 
+        #region Get All
         public async Task<List<UserModel>> GetAll()
         {
             return await context.Users.AsQueryable().ToListAsync();
         }
+        #endregion
 
+        #region Get By Id
         public async Task<UserModel> GetById(Guid id)
         {
             var user = await context.Users.FindAsync(id);
@@ -36,7 +42,9 @@ namespace TodoCustomList.Services
 
             return user;
         }
+        #endregion
 
+        #region Delete
         public async Task Delete(Guid id)
         {
             var user = await context.Users.FindAsync(id);
@@ -46,11 +54,13 @@ namespace TodoCustomList.Services
             context.Users.Remove(user);
             await context.SaveChangesAsync();
         }
+        #endregion
 
+        #region Update
         public async Task<UserModel> Update(UserModel user)
         {
             var oldUser = await context.Users.FindAsync(user.Id);
-            if (oldUser is null) throw new Exception();
+            if (oldUser is null) throw new Exception("Erro ao atualizar usuario");
 
             oldUser.Email = user.Email;
             oldUser.Password = user.Password;
@@ -61,6 +71,7 @@ namespace TodoCustomList.Services
 
             return oldUser;
         }
+        #endregion
 
     }
 }

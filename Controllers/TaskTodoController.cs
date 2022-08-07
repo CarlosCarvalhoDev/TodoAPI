@@ -11,7 +11,7 @@ namespace TodoCustomList.Controllers
     public class TaskTodoController : ControllerBase
     {
         private TaskTodoService taskTodoService = new TaskTodoService();
-        //private UserService userService = new UserService();
+
         //create
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateTaskTodoDTO createTaskTodoDTO)

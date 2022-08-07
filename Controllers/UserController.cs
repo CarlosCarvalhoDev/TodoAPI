@@ -17,7 +17,14 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-                return StatusCode(StatusCodes.Status201Created, await userService.CreateUser(createUserDTO));
+                var userCreated = await userService.CreateUser(createUserDTO);
+                return StatusCode(StatusCodes.Status201Created, new UserResponseViewModel
+                {
+                    Id = userCreated.Id.ToString(),
+                    Email = userCreated.Email,
+                    Name = userCreated.Name
+
+                });
             }
             catch (Exception ex)
             {
@@ -35,6 +42,7 @@ namespace TodoCustomList.Controllers
                     Id = a.Id.ToString(),
                     Email = a.Email,
                     Name = a.Name
+
                 }).ToList();
 
                 return StatusCode(StatusCodes.Status200OK, new ListUserResponseViewModel { userResponseViewModels = users }); 
@@ -50,7 +58,14 @@ namespace TodoCustomList.Controllers
         {
             try
             {
-                return StatusCode(StatusCodes.Status200OK, await userService.GetById(Guid.Parse(id)));
+                var user = await userService.GetById(Guid.Parse(id));
+                return StatusCode(StatusCodes.Status200OK, new UserResponseViewModel
+                {
+                    Id = user.Id.ToString(),
+                    Email = user.Email,
+                    Name = user.Name
+
+                });
             }
             catch(Exception ex)
             {
@@ -85,9 +100,6 @@ namespace TodoCustomList.Controllers
             }
             
         }
-
-        
-
 
     }
 }

@@ -10,7 +10,8 @@ namespace TodoCustomList.Services
     {
         private readonly AppDbContext context = new AppDbContext();
 
-        public async Task<TodoModel> Create(CreateTodoDTO createTodoDTO)
+        #region METHOD CREATE TODO
+        public async Task<TodoModel> Create(TodoDTO createTodoDTO)
         {
             var todo = new TodoModel()
             {
@@ -26,12 +27,16 @@ namespace TodoCustomList.Services
 
             return todo;
         }
+        #endregion
 
+        #region METHOD GET ALL TODO`S
         public async Task<IEnumerable<TodoModel>> GetAll()
         {
            return await context.Todos.AsQueryable().ToListAsync();
         }
+        #endregion
 
+        #region METHOD GET BY ID TODO
         public async Task<TodoModel> GetById(Guid id)
         {
             var todo = await context.Todos.FindAsync(id);
@@ -40,7 +45,9 @@ namespace TodoCustomList.Services
             
             return todo;
         }
+        #endregion
 
+        #region METHOD DELETE TODO
         public async Task Delete(Guid id)
         {
             var todo = await context.Todos.FindAsync(id);
@@ -50,7 +57,9 @@ namespace TodoCustomList.Services
             context.Todos.Remove(todo);
             await context.SaveChangesAsync();
         }
+        #endregion
 
+        #region METHOD UPDATE TODO
         public async Task<TodoModel> Update(string todoId,  UpdateTodoDTO updatedTodo)
         {
             var Todo = await context.Todos.FindAsync(Guid.Parse(todoId));
@@ -67,7 +76,9 @@ namespace TodoCustomList.Services
 
             return Todo;
         }
+        #endregion
 
+        #region METHOD CHANGE TODO USER
         public async Task<TodoModel> ChangeTodoUser(string todoId, string userId)
         {
             var oldTodo = await context.Todos.FindAsync(Guid.Parse(todoId));
@@ -84,8 +95,9 @@ namespace TodoCustomList.Services
 
             return oldTodo;
         }
+        #endregion
 
-
+        #region METHOD GET ALL USER TODO
         public List<TodoSumaryResponseViewModel> GetAllUserTodo()
         {
             var query = from user in context.Users
@@ -100,7 +112,7 @@ namespace TodoCustomList.Services
 
             return query.ToList();
         }
-
+        #endregion
 
     }
 }

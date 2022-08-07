@@ -2,7 +2,7 @@
 
 namespace TodoCustomList.Models.Todo.Dto
 {
-    public class CreateTodoDTO
+    public class TodoDTO
     {
         [Required]
         public string Title { get; set; }

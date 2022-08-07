@@ -10,6 +10,8 @@ namespace TodoCustomList.Services
     public class TaskTodoService
     {
         private readonly AppDbContext context = new AppDbContext();
+
+        #region METHOD CREATE TASK
         public async Task<TaskTodoModel> Create(CreateTaskTodoDTO task)
         {
             var newtask = new TaskTodoModel()
@@ -23,12 +25,16 @@ namespace TodoCustomList.Services
 
             return newtask;
         }
+        #endregion
 
+        #region METHOD GET ALL TASKS
         public async Task<List<TaskTodoModel>> GetAll()
         {
             return await context.Tasks.AsQueryable().ToListAsync();
         }
+        #endregion
 
+        #region METHOD GET BY ID 
         public async Task<TaskTodoModel> GetById(Guid id)
         {
             var task = await context.Tasks.FindAsync(id);
@@ -37,7 +43,9 @@ namespace TodoCustomList.Services
 
             return task;
         }
+        #endregion
 
+        #region METHOD DELETE TASK
         public async Task Delete(Guid id)
         {
             var task = await context.Tasks.FindAsync(id);
@@ -47,7 +55,9 @@ namespace TodoCustomList.Services
             context.Tasks.Remove(task);
             await context.SaveChangesAsync();
         }
+        #endregion
 
+        #region METHOD UPDATE TASK
         public async Task<TaskTodoModel> Update(UpdateTaskTodoDTO taskDto)
         {
             var task = await context.Tasks.FindAsync(taskDto.Id);
@@ -62,12 +72,16 @@ namespace TodoCustomList.Services
 
             return task;
         }
+        #endregion
 
+        #region METHOD GET ALL TASKS BY TODO
         public async Task<List<TaskTodoModel>> GetAllTaskByTodoId(Guid id)
         {
             return await context.Tasks.AsQueryable().Where(a => a.TodoId == id).ToListAsync();
         }
+        #endregion
 
+        #region METHOD UPDATE STATUS TASKS
         public async Task UpdateStatus(UpdateStatusTaskDTO taskDTO)
         {
             var task = await context.Tasks.FindAsync(Guid.Parse(taskDTO.TaskId));
@@ -79,5 +93,6 @@ namespace TodoCustomList.Services
             await context.SaveChangesAsync();
 
         }
+        #endregion
     }
 }
